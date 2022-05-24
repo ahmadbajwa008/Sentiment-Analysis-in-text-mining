@@ -1,0 +1,759 @@
+#loading necessary packages\
+
+
+install.packages("NLP") 
+library("NLP") 
+install.packages("tm")
+library("tm")
+install.packages("RColorBrewer")
+library("RColorBrewer")
+install.packages("wordcloud")
+library("wordcloud")
+
+#read the dataset file
+Reviews <- read.csv("tourist_accommodation_reviews.csv",header = TRUE)
+
+#inspect the dataset
+names(Reviews)
+head(Reviews)
+tail(Reviews)
+summary(Reviews)
+str(Reviews)
+dim(Reviews)
+
+#Select the 30 Hotels from the tourist_accommodation_reviews dataset.
+
+Horn_Grill <- subset(Reviews,
+                     Hotel.Restaurant.name=="Horn Grill Steak and Seafood")
+Sala_Mexicali <- subset(Reviews,
+                        Hotel.Restaurant.name=="Sala Mexicali")
+WAI_Thai <- subset(Reviews,
+                   Hotel.Restaurant.name=="WAI thai")
+Hard_Rock <- subset(Reviews,
+                    Hotel.Restaurant.name=="Hard Rock Cafe Phuket")
+CatFish_Cafe <- subset(Reviews,
+                       Hotel.Restaurant.name=="CatFish Cafe")
+Baan_Rim <- subset(Reviews,
+                   Hotel.Restaurant.name=="Baan Rim Pa Kalim")
+The_Bua <- subset(Reviews,
+                  Hotel.Restaurant.name=="The Bua Restaurant")
+Shakers <-subset(Reviews,
+                 Hotel.Restaurant.name=="Shakers")
+Royal_Tandoor <-subset(Reviews,
+                       Hotel.Restaurant.name=="Royal Tandoor")
+The_Oceanfront <- subset(Reviews,
+                         Hotel.Restaurant.name=="The Oceanfront Restaurant and Bar at Kata Rocks")
+Peony_Cafe <- subset(Reviews,
+                     Hotel.Restaurant.name=="Peony Cafe & Restaurant")
+Salsa_Mexicana <- subset(Reviews,
+                         Hotel.Restaurant.name=="Salsa Mexicana")
+Sultans_Grill <- subset(Reviews,
+                        Hotel.Restaurant.name=="Sultan's Grill Authentic Turkish & Indian Cuisine")
+Sunset_Restaurant <- subset(Reviews,
+                            Hotel.Restaurant.name=="Sunset Restaurant")
+Two_Chefs <- subset(Reviews,
+                    Hotel.Restaurant.name=="Two Chefs Kata Beach")
+Kwong_Shop <- subset(Reviews,
+                     Hotel.Restaurant.name=="Kwong Shop Seafood")
+La_Sala <- subset(Reviews,
+                  Hotel.Restaurant.name=="La Sala - Anantara Mai Khao Phuket Villas")
+Leonardo_Davinci <- subset(Reviews,
+                           Hotel.Restaurant.name=="Leonardo Davinci")
+Rider_Cafe <- subset(Reviews,
+                     Hotel.Restaurant.name=="Rider Cafe")
+SALA_Phuket <- subset(Reviews,
+                      Hotel.Restaurant.name=="SALA Phuket Restaurant")
+The_Boathouse <- subset(Reviews,
+                        Hotel.Restaurant.name=="The Boathouse Restaurant")
+Siam_Deli <- subset(Reviews,
+                    Hotel.Restaurant.name=="Siam Deli")
+Briley_Chicken <- subset(Reviews,
+                         Hotel.Restaurant.name=="Briley Chicken Rice")
+Phens_Bar <- subset(Reviews,
+                    Hotel.Restaurant.name=="Phen's Restaurant Bar & Coffee")
+Tunk_Ka <- subset(Reviews,
+                  Hotel.Restaurant.name=="Tunk-Ka Cafe")
+Madras_Cafe <- subset(Reviews,
+                      Hotel.Restaurant.name=="Madras Cafe")
+Napoli_Ristorante <- subset(Reviews,
+                            Hotel.Restaurant.name=="Napoli Ristorante Pizzeria")
+Kokosnuss <- subset(Reviews,
+                    Hotel.Restaurant.name=="Kokosnuss")
+Karlssons <- subset(Reviews,
+                    Hotel.Restaurant.name=="Karlssons Restaurant Patong")
+Papaya <- subset(Reviews,
+                 Hotel.Restaurant.name=="Papaya")
+
+#inspect the review column in the dataset
+
+head(Horn_Grill$Review)
+head(Sala_Mexicali$Review)
+head(WAI_Thai$Review)
+head(Hard_Rock$Review)
+head(CatFish_Cafe$Review)
+head(Baan_Rim$Review)
+head(The_Bua$Review)
+head(Shakers$Review)
+head(Royal_Tandoor$Review)
+head(The_Oceanfront$Review)
+head(Peony_Cafe$Review)
+head(Salsa_Mexicana$Review)
+head(Sultans_Grill$Review)
+head(Sunset_Restaurant$Review)
+head(Two_Chefs$Review)
+head(Kwong_Shop$Review)
+head(La_Sala$Review)
+head(Leonardo_Davinci$Review)
+head(Rider_Cafe$Review)
+head(SALA_Phuket$Review)
+head(The_Boathouse$Review)
+head(Siam_Deli$Review)
+head(Briley_Chicken$Review)
+head(Phens_Bar$Review)
+head(Tunk_Ka$Review)
+head(Madras_Cafe$Review)
+head(Napoli_Ristorante$Review)
+head(Kokosnuss$Review)
+head(Karlssons$Review)
+head(Papaya$Review)
+
+#Making the text vectors of 30 hotels.
+
+review_horngrill<-Horn_Grill$Review
+review_salamexicali<-Sala_Mexicali$Review
+review_waithai<-WAI_Thai$Review
+review_harrock<-Hard_Rock$Review
+review_catfish<-CatFish_Cafe$Review
+review_baanrim<-Baan_Rim$Review
+review_thebua<-The_Bua$Review
+review_shakers<-Shakers$Review
+review_royaltandoor<-Royal_Tandoor$Review
+review_oceanfront<-The_Oceanfront$Review
+review_peony<-Peony_Cafe$Review
+review_salsamexicana<-Salsa_Mexicana$Review
+review_sultans<-Sultans_Grill$Review
+review_sunset<-Sunset_Restaurant$Review
+review_twochefs<-Two_Chefs$Review
+review_kwong<-Kwong_Shop$Review
+review_lasala<-La_Sala$Review
+review_leonardo<-Leonardo_Davinci$Review
+review_rider<-Rider_Cafe$Review
+review_salaphuket<-SALA_Phuket$Review
+review_boathouse<-The_Boathouse$Review
+review_siamdeli<-Siam_Deli$Review
+review_briley<-Briley_Chicken$Review
+review_phenbar<-Phens_Bar$Review
+review_tunkka<-Tunk_Ka$Review
+review_madras<-Madras_Cafe$Review
+review_napoli<-Napoli_Ristorante$Review
+review_kokosnuss<-Kokosnuss$Review
+review_karlssons<-Karlssons$Review
+review_papaya<-Papaya$Review
+
+#convert all text to lowercase
+
+review_horngrill<-tolower(review_horngrill)
+review_salamexicali<-tolower(review_salamexicali)
+review_waithai<-tolower(review_waithai)
+review_harrock<-tolower(review_harrock)
+review_catfish<-tolower(review_catfish)
+review_baanrim<-tolower(review_baanrim)
+review_thebua<-tolower(review_thebua)
+review_shakers<-tolower(review_shakers)
+review_royaltandoor<-tolower(review_royaltandoor)
+review_oceanfront<-tolower(review_oceanfront)
+review_peony<-tolower(review_peony)
+review_salsamexicana<-tolower(review_salsamexicana)
+review_sultans<-tolower(review_sultans)
+review_sunset<-tolower(review_sunset)
+review_twochefs<-tolower(review_twochefs)
+review_kwong<-tolower(review_kwong)
+review_lasala<-tolower(review_lasala)
+review_leonardo<-tolower(review_leonardo)
+review_rider<-tolower(review_rider)
+review_salaphuket<-tolower(review_salaphuket)
+review_boathouse<-tolower(review_boathouse)
+review_siamdeli<-tolower(review_siamdeli)
+review_briley<-tolower(review_briley)
+review_phenbar<-tolower(review_phenbar)
+review_tunkka<-tolower(review_tunkka)
+review_madras<-tolower(review_madras)
+review_napoli<-tolower(review_napoli)
+review_kokosnuss<-tolower(review_kokosnuss)
+review_karlssons<-tolower(review_karlssons)
+review_papaya<-tolower(review_papaya)
+
+#remove the links from the reviews
+
+review_horngrill <- gsub("http\\S+\\s*", "", review_horngrill)
+review_salamexicali<- gsub("http\\S+\\s*", "", review_salamexicali)
+review_waithai<-gsub("http\\S+\\s*", "",review_waithai)
+review_harrock<-gsub("http\\S+\\s*", "",review_harrock)
+review_catfish<-gsub("http\\S+\\s*", "",review_catfish)
+review_baanrim<-gsub("http\\S+\\s*", "",review_baanrim)
+review_thebua<-gsub("http\\S+\\s*", "",review_thebua)
+review_shakers<-gsub("http\\S+\\s*", "",review_shakers)
+review_royaltandoor<-gsub("http\\S+\\s*", "",review_royaltandoor)
+review_oceanfront<-gsub("http\\S+\\s*", "",review_oceanfront)
+review_peony<-gsub("http\\S+\\s*", "",review_peony)
+review_salsamexicana<-gsub("http\\S+\\s*", "",review_salsamexicana)
+review_sultans<-gsub("http\\S+\\s*", "",review_sultans)
+review_sunset<-gsub("http\\S+\\s*", "",review_sunset)
+review_twochefs<-gsub("http\\S+\\s*", "",review_twochefs)
+review_kwong<-gsub("http\\S+\\s*", "",review_kwong)
+review_lasala<-gsub("http\\S+\\s*", "",review_lasala)
+review_leonardo<-gsub("http\\S+\\s*", "",review_leonardo)
+review_rider<-gsub("http\\S+\\s*", "",review_rider)
+review_salaphuket<-gsub("http\\S+\\s*", "",review_salaphuket)
+review_boathouse<-gsub("http\\S+\\s*", "",review_boathouse)
+review_siamdeli<-gsub("http\\S+\\s*", "",review_siamdeli)
+review_briley<-gsub("http\\S+\\s*", "",review_briley)
+review_phenbar<-gsub("http\\S+\\s*", "",review_phenbar)
+review_tunkka<-gsub("http\\S+\\s*", "",review_tunkka)
+review_madras<-gsub("http\\S+\\s*", "",review_madras)
+review_napoli<-gsub("http\\S+\\s*", "",review_napoli)
+review_kokosnuss<-gsub("http\\S+\\s*", "",review_kokosnuss)
+review_karlssons<-gsub("http\\S+\\s*", "",review_karlssons)
+review_papaya<-gsub("http\\S+\\s*", "",review_papaya)
+
+#remove the punctuation
+
+review_horngrill <- gsub("[[:punct:]]", "", review_horngrill)
+review_salamexicali<- gsub("[[:punct:]]", "", review_salamexicali)
+review_waithai<-gsub("[[:punct:]]", "", review_waithai)
+review_harrock<-gsub("[[:punct:]]", "", review_harrock)
+review_catfish<-gsub("[[:punct:]]", "", review_catfish)
+review_baanrim<-gsub("[[:punct:]]", "", review_baanrim)
+review_thebua<-gsub("[[:punct:]]", "", review_thebua)
+review_shakers<-gsub("[[:punct:]]", "", review_shakers)
+review_royaltandoor<-gsub("[[:punct:]]", "", review_royaltandoor)
+review_oceanfront<-gsub("[[:punct:]]", "", review_oceanfront)
+review_peony<-gsub("[[:punct:]]", "", review_peony)
+review_salsamexicana<-gsub("[[:punct:]]", "", review_salsamexicana)
+review_sultans<-gsub("[[:punct:]]", "", review_sultans)
+review_sunset<-gsub("[[:punct:]]", "", review_sunset)
+review_twochefs<-gsub("[[:punct:]]", "", review_twochefs)
+review_kwong<-gsub("[[:punct:]]", "", review_kwong)
+review_lasala<-gsub("[[:punct:]]", "", review_lasala)
+review_leonardo<-gsub("[[:punct:]]", "", review_leonardo)
+review_rider<-gsub("[[:punct:]]", "", review_rider)
+review_salaphuket<-gsub("[[:punct:]]", "", review_salaphuket)
+review_boathouse<-gsub("[[:punct:]]", "", review_boathouse)
+review_siamdeli<-gsub("[[:punct:]]", "", review_siamdeli)
+review_briley<-gsub("[[:punct:]]", "", review_briley)
+review_phenbar<-gsub("[[:punct:]]", "", review_phenbar)
+review_tunkka<-gsub("[[:punct:]]", "", review_tunkka)
+review_madras<-gsub("[[:punct:]]", "", review_madras)
+review_napoli<-gsub("[[:punct:]]", "", review_napoli)
+review_kokosnuss<-gsub("[[:punct:]]", "", review_kokosnuss)
+review_karlssons<-gsub("[[:punct:]]", "", review_karlssons)
+review_papaya<-gsub("[[:punct:]]", "", review_papaya)
+
+#remove the digits
+
+review_horngrill <- gsub("[[:digit:]]", "", review_horngrill)
+review_salamexicali<- gsub("[[:digit:]]", "", review_salamexicali)
+review_waithai<-gsub("[[:digit:]]", "", review_waithai)
+review_harrock<-gsub("[[:digit:]]", "", review_harrock)
+review_catfish<-gsub("[[:digit:]]", "", review_catfish)
+review_baanrim<-gsub("[[:digit:]]", "", review_baanrim)
+review_thebua<-gsub("[[:digit:]]", "", review_thebua)
+review_shakers<-gsub("[[:digit:]]", "", review_shakers)
+review_royaltandoor<-gsub("[[:digit:]]", "", review_royaltandoor)
+review_oceanfront<-gsub("[[:digit:]]", "", review_oceanfront)
+review_peony<-gsub("[[:digit:]]", "", review_peony)
+review_salsamexicana<-gsub("[[:digit:]]", "", review_salsamexicana)
+review_sultans<-gsub("[[:digit:]]", "", review_sultans)
+review_sunset<-gsub("[[:digit:]]", "", review_sunset)
+review_twochefs<-gsub("[[:digit:]]", "", review_twochefs)
+review_kwong<-gsub("[[:digit:]]", "", review_kwong)
+review_lasala<-gsub("[[:digit:]]", "", review_lasala)
+review_leonardo<-gsub("[[:digit:]]", "", review_leonardo)
+review_rider<-gsub("[[:digit:]]", "", review_rider)
+review_salaphuket<-gsub("[[:digit:]]", "", review_salaphuket)
+review_boathouse<-gsub("[[:digit:]]", "", review_boathouse)
+review_siamdeli<-gsub("[[:digit:]]", "", review_siamdeli)
+review_briley<-gsub("[[:digit:]]", "", review_briley)
+review_phenbar<-gsub("[[:digit:]]", "", review_phenbar)
+review_tunkka<-gsub("[[:digit:]]", "", review_tunkka)
+review_madras<-gsub("[[:digit:]]", "", review_madras)
+review_napoli<-gsub("[[:digit:]]", "", review_napoli)
+review_kokosnuss<-gsub("[[:digit:]]", "", review_kokosnuss)
+review_karlssons<-gsub("[[:digit:]]", "", review_karlssons)
+review_papaya<-gsub("[[:digit:]]", "", review_papaya)
+
+#.Remove leading blank spaces at the beginning from the reviews
+
+review_horngrill <- gsub("^ ", "", review_horngrill)
+review_salamexicali<- gsub("^ ", "", review_salamexicali)
+review_waithai<-gsub("^ ", "", review_waithai)
+review_harrock<-gsub("^ ", "", review_harrock)
+review_catfish<-gsub("^ ", "", review_catfish)
+review_baanrim<-gsub("^ ", "", review_baanrim)
+review_thebua<-gsub("^ ", "", review_thebua)
+review_shakers<-gsub("^ ", "", review_shakers)
+review_royaltandoor<-gsub("^ ", "", review_royaltandoor)
+review_oceanfront<-gsub("^ ", "", review_oceanfront)
+review_peony<-gsub("^ ", "", review_peony)
+review_salsamexicana<-gsub("^ ", "", review_salsamexicana)
+review_sultans<-gsub("^ ", "", review_sultans)
+review_sunset<-gsub("^ ", "", review_sunset)
+review_twochefs<-gsub("^ ", "", review_twochefs)
+review_kwong<-gsub("^ ", "", review_kwong)
+review_lasala<-gsub("^ ", "", review_lasala)
+review_leonardo<-gsub("^ ", "", review_leonardo)
+review_rider<-gsub("^ ", "", review_rider)
+review_salaphuket<-gsub("^ ", "", review_salaphuket)
+review_boathouse<-gsub("^ ", "", review_boathouse)
+review_siamdeli<-gsub("^ ", "", review_siamdeli)
+review_briley<-gsub("^ ", "", review_briley)
+review_phenbar<-gsub("^ ", "", review_phenbar)
+review_tunkka<-gsub("^ ", "", review_tunkka)
+review_madras<-gsub("^ ", "", review_madras)
+review_napoli<-gsub("^ ", "", review_napoli)
+review_kokosnuss<-gsub("^ ", "", review_kokosnuss)
+review_karlssons<-gsub("^ ", "", review_karlssons)
+review_papaya<-gsub("^ ", "", review_papaya)
+
+#Remove blank spaces at the end from the reviews
+
+review_horngrill <- gsub(" $", "", review_horngrill)
+review_salamexicali<- gsub(" $", "", review_salamexicali)
+review_waithai<-gsub(" $", "", review_waithai)
+review_harrock<-gsub(" $", "", review_harrock)
+review_catfish<-gsub(" $", "", review_catfish)
+review_baanrim<-gsub(" $", "", review_baanrim)
+review_thebua<-gsub(" $", "", review_thebua)
+review_shakers<-gsub(" $", "", review_shakers)
+review_royaltandoor<-gsub(" $", "", review_royaltandoor)
+review_oceanfront<-gsub(" $", "", review_oceanfront)
+review_peony<-gsub(" $", "", review_peony)
+review_salsamexicana<-gsub(" $", "", review_salsamexicana)
+review_sultans<-gsub(" $", "", review_sultans)
+review_sunset<-gsub(" $", "", review_sunset)
+review_twochefs<-gsub(" $", "", review_twochefs)
+review_kwong<-gsub(" $", "", review_kwong)
+review_lasala<-gsub(" $", "", review_lasala)
+review_leonardo<-gsub(" $", "", review_leonardo)
+review_rider<-gsub(" $", "", review_rider)
+review_salaphuket<-gsub(" $", "", review_salaphuket)
+review_boathouse<-gsub(" $", "", review_boathouse)
+review_siamdeli<-gsub(" $", "", review_siamdeli)
+review_briley<-gsub(" $", "", review_briley)
+review_phenbar<-gsub(" $", "", review_phenbar)
+review_tunkka<-gsub(" $", "", review_tunkka)
+review_madras<-gsub(" $", "", review_madras)
+review_napoli<-gsub(" $", "", review_napoli)
+review_kokosnuss<-gsub(" $", "", review_kokosnuss)
+review_karlssons<-gsub(" $", "", review_karlssons)
+review_papaya<-gsub(" $", "", review_papaya)
+
+#Remove "tablet" word from the reviews
+
+review_horngrill <- gsub("tablet", "", review_horngrill)
+review_salamexicali<- gsub("tablet", "", review_salamexicali)
+review_waithai<-gsub("tablet", "", review_waithai)
+review_harrock<-gsub("tablet", "", review_harrock)
+review_catfish<-gsub("tablet", "", review_catfish)
+review_baanrim<-gsub("tablet", "", review_baanrim)
+review_thebua<-gsub("tablet", "", review_thebua)
+review_shakers<-gsub("tablet", "", review_shakers)
+review_royaltandoor<-gsub("tablet", "", review_royaltandoor)
+review_oceanfront<-gsub("tablet", "", review_oceanfront)
+review_peony<-gsub("tablet", "", review_peony)
+review_salsamexicana<-gsub("tablet", "", review_salsamexicana)
+review_sultans<-gsub("tablet", "", review_sultans)
+review_sunset<-gsub("tablet", "", review_sunset)
+review_twochefs<-gsub("tablet", "", review_twochefs)
+review_kwong<-gsub("tablet", "", review_kwong)
+review_lasala<-gsub("tablet", "", review_lasala)
+review_leonardo<-gsub("tablet", "", review_leonardo)
+review_rider<-gsub("tablet", "", review_rider)
+review_salaphuket<-gsub("tablet", "", review_salaphuket)
+review_boathouse<-gsub("tablet", "", review_boathouse)
+review_siamdeli<-gsub("tablet", "", review_siamdeli)
+review_briley<-gsub("tablet", "", review_briley)
+review_phenbar<-gsub("tablet", "", review_phenbar)
+review_tunkka<-gsub("tablet", "", review_tunkka)
+review_madras<-gsub("tablet", "", review_madras)
+review_napoli<-gsub("tablet", "", review_napoli)
+review_kokosnuss<-gsub("tablet", "", review_kokosnuss)
+review_karlssons<-gsub("tablet", "", review_karlssons)
+review_papaya<-gsub("tablet", "", review_papaya)
+
+#Inspect the vectors after cleaning
+
+head(review_horngrill)
+head(review_salamexicali)
+head(review_waithai)
+head(review_harrock)
+head(review_catfish)
+head(review_baanrim)
+head(review_thebua)
+head(review_shakers)
+head(review_royaltandoor)
+head(review_oceanfront)
+head(review_peony)
+head(review_salsamexicana)
+head(review_sultans)
+head(review_sunset)
+head(review_twochefs)
+head(review_kwong)
+head(review_lasala)
+head(review_leonardo)
+head(review_rider)
+head(review_salaphuket)
+head(review_boathouse)
+head(review_siamdeli)
+head(review_briley)
+head(review_phenbar)
+head(review_tunkka)
+head(review_madras)
+head(review_napoli)
+head(review_kokosnuss)
+head(review_karlssons)
+head(review_papaya)
+
+#Converting the text vectors to corpus
+
+corpus_review_horngrill <-Corpus(VectorSource(review_horngrill))
+corpus_review_salamexicali<- Corpus(VectorSource(review_salamexicali))
+corpus_review_waithai<-Corpus(VectorSource(review_waithai))
+corpus_review_harrock<-Corpus(VectorSource(review_harrock))
+corpus_review_catfish<-Corpus(VectorSource(review_catfish))
+corpus_review_baanrim<-Corpus(VectorSource(review_baanrim))
+corpus_review_thebua<-Corpus(VectorSource(review_thebua))
+corpus_review_shakers<-Corpus(VectorSource(review_shakers))
+corpus_review_royaltandoor<-Corpus(VectorSource(review_royaltandoor))
+corpus_review_oceanfront<-Corpus(VectorSource(review_oceanfront))
+corpus_review_peony<-Corpus(VectorSource(review_peony))
+corpus_review_salsamexicana<-Corpus(VectorSource(review_salsamexicana))
+corpus_review_sultans<-Corpus(VectorSource(review_sultans))
+corpus_review_sunset<-Corpus(VectorSource(review_sunset))
+corpus_review_twochefs<-Corpus(VectorSource(review_twochefs))
+corpus_review_kwong<-Corpus(VectorSource(review_kwong))
+corpus_review_lasala<-Corpus(VectorSource(review_lasala))
+corpus_review_leonardo<-Corpus(VectorSource(review_leonardo))
+corpus_review_rider<-Corpus(VectorSource(review_rider))
+corpus_review_salaphuket<-Corpus(VectorSource(review_salaphuket))
+corpus_review_boathouse<-Corpus(VectorSource(review_boathouse))
+corpus_review_siamdeli<-Corpus(VectorSource(review_siamdeli))
+corpus_review_briley<-Corpus(VectorSource(review_briley))
+corpus_review_phenbar<-Corpus(VectorSource(review_phenbar))
+corpus_review_tunkka<-Corpus(VectorSource(review_tunkka))
+corpus_review_madras<-Corpus(VectorSource(review_madras))
+corpus_review_napoli<-Corpus(VectorSource(review_napoli))
+corpus_review_kokosnuss<-Corpus(VectorSource(review_kokosnuss))
+corpus_review_karlssons<-Corpus(VectorSource(review_karlssons))
+corpus_review_papaya<-Corpus(VectorSource(review_papaya))
+
+
+
+#inspect the corpus
+
+corpus_review_horngrill
+corpus_review_salamexicali
+corpus_review_waithai
+corpus_review_harrock
+corpus_review_catfish
+corpus_review_baanrim
+corpus_review_thebua
+corpus_review_shakers
+corpus_review_royaltandoor
+corpus_review_oceanfront
+corpus_review_peony
+corpus_review_salsamexicana
+corpus_review_sultans
+corpus_review_sunset
+corpus_review_twochefs
+corpus_review_kwong
+corpus_review_lasala
+corpus_review_leonardo
+corpus_review_rider
+corpus_review_salaphuket
+corpus_review_boathouse
+corpus_review_siamdeli
+corpus_review_briley
+corpus_review_phenbar
+corpus_review_tunkka
+corpus_review_madras
+corpus_review_napoli
+corpus_review_kokosnuss
+corpus_review_karlssons
+corpus_review_papaya
+
+
+#Clean up corpus by removing stop words and Whitespace
+
+
+corpus_review_horngrill <- tm_map(corpus_review_horngrill, removeWords,stopwords("english"))
+corpus_review_horngrill <- tm_map(corpus_review_horngrill, stripWhitespace)
+inspect(corpus_review_horngrill)
+
+corpus_review_salamexicali <- tm_map(corpus_review_salamexicali, removeWords,stopwords("english"))
+corpus_review_salamexicali <- tm_map(corpus_review_salamexicali, stripWhitespace)
+inspect(corpus_review_salamexicali)
+
+corpus_review_waithai <- tm_map(corpus_review_waithai, removeWords,stopwords("english"))
+corpus_review_waithai <- tm_map(corpus_review_waithai, stripWhitespace)
+inspect(corpus_review_waithai)
+
+corpus_review_harrock <- tm_map(corpus_review_harrock, removeWords,stopwords("english"))
+corpus_review_harrock <- tm_map(corpus_review_harrock, stripWhitespace)
+inspect(corpus_review_harrock)
+
+
+corpus_review_catfish <- tm_map(corpus_review_catfish, removeWords,stopwords("english"))
+corpus_review_catfish <- tm_map(corpus_review_catfish, stripWhitespace)
+inspect(corpus_review_catfish)
+
+
+corpus_review_baanrim <- tm_map(corpus_review_baanrim, removeWords,stopwords("english"))
+corpus_review_baanrim <- tm_map(corpus_review_baanrim, stripWhitespace)
+inspect(corpus_review_baanrim)
+
+corpus_review_thebua <- tm_map(corpus_review_thebua, removeWords,stopwords("english"))
+corpus_review_thebua <- tm_map(corpus_review_thebua, stripWhitespace)
+inspect(corpus_review_thebua)
+
+corpus_review_shakers <- tm_map(corpus_review_shakers, removeWords,stopwords("english"))
+corpus_review_shakers <- tm_map(corpus_review_shakers, stripWhitespace)
+inspect(corpus_review_shakers)
+
+corpus_review_royaltandoor <- tm_map(corpus_review_royaltandoor, removeWords,stopwords("english"))
+corpus_review_royaltandoor <- tm_map(corpus_review_royaltandoor, stripWhitespace)
+inspect(corpus_review_royaltandoor)
+
+corpus_review_oceanfront <- tm_map(corpus_review_oceanfront, removeWords,stopwords("english"))
+corpus_review_oceanfront <- tm_map(corpus_review_oceanfront, stripWhitespace)
+inspect(corpus_review_oceanfront)
+
+corpus_review_peony <- tm_map(corpus_review_peony, removeWords,stopwords("english"))
+corpus_review_peony <- tm_map(corpus_review_peony, stripWhitespace)
+inspect(corpus_review_peony)
+
+corpus_review_salsamexicana <- tm_map(corpus_review_salsamexicana, removeWords,stopwords("english"))
+corpus_review_salsamexicana <- tm_map(corpus_review_salsamexicana, stripWhitespace)
+inspect(corpus_review_salsamexicana)
+
+corpus_review_sultans <- tm_map(corpus_review_sultans, removeWords,stopwords("english"))
+corpus_review_sultans <- tm_map(corpus_review_sultans, stripWhitespace)
+inspect(corpus_review_sultans)
+
+corpus_review_sunset <- tm_map(corpus_review_sunset, removeWords,stopwords("english"))
+corpus_review_sunset <- tm_map(corpus_review_sunset, stripWhitespace)
+inspect(corpus_review_sunset)
+
+
+corpus_review_twochefs <- tm_map(corpus_review_twochefs, removeWords,stopwords("english"))
+corpus_review_twochefs <- tm_map(corpus_review_twochefs, stripWhitespace)
+inspect(corpus_review_twochefs)
+
+corpus_review_kwong <- tm_map(corpus_review_kwong, removeWords,stopwords("english"))
+corpus_review_kwong <- tm_map(corpus_review_kwong, stripWhitespace)
+inspect(corpus_review_kwong)
+
+corpus_review_lasala <- tm_map(corpus_review_lasala, removeWords,stopwords("english"))
+corpus_review_lasala <- tm_map(corpus_review_lasala, stripWhitespace)
+inspect(corpus_review_lasala)
+
+corpus_review_leonardo <- tm_map(corpus_review_leonardo, removeWords,stopwords("english"))
+corpus_review_leonardo <- tm_map(corpus_review_leonardo, stripWhitespace)
+inspect(corpus_review_leonardo)
+
+corpus_review_rider <- tm_map(corpus_review_rider, removeWords,stopwords("english"))
+corpus_review_rider <- tm_map(corpus_review_rider, stripWhitespace)
+inspect(corpus_review_rider)
+
+
+corpus_review_salaphuket <- tm_map(corpus_review_salaphuket, removeWords,stopwords("english"))
+corpus_review_salaphuket <- tm_map(corpus_review_salaphuket, stripWhitespace)
+inspect(corpus_review_salaphuket)
+
+corpus_review_boathouse <- tm_map(corpus_review_boathouse, removeWords,stopwords("english"))
+corpus_review_boathouse <- tm_map(corpus_review_boathouse, stripWhitespace)
+inspect(corpus_review_boathouse)
+
+
+corpus_review_siamdeli <- tm_map(corpus_review_siamdeli, removeWords,stopwords("english"))
+corpus_review_siamdeli <- tm_map(corpus_review_siamdeli, stripWhitespace)
+inspect(corpus_review_siamdeli)
+
+
+corpus_review_briley <- tm_map(corpus_review_briley, removeWords,stopwords("english"))
+corpus_review_briley <- tm_map(corpus_review_briley, stripWhitespace)
+inspect(corpus_review_briley)
+
+corpus_review_phenbar <- tm_map(corpus_review_phenbar, removeWords,stopwords("english"))
+corpus_review_phenbar <- tm_map(corpus_review_phenbar, stripWhitespace)
+inspect(corpus_review_phenbar)
+
+
+corpus_review_tunkka <- tm_map(corpus_review_tunkka, removeWords,stopwords("english"))
+corpus_review_tunkka <- tm_map(corpus_review_tunkka, stripWhitespace)
+inspect(corpus_review_tunkka)
+
+
+
+corpus_review_madras <- tm_map(corpus_review_madras, removeWords,stopwords("english"))
+corpus_review_madras <- tm_map(corpus_review_madras, stripWhitespace)
+inspect(corpus_review_madras)
+
+
+corpus_review_napoli <- tm_map(corpus_review_napoli, removeWords,stopwords("english"))
+corpus_review_napoli <- tm_map(corpus_review_napoli, stripWhitespace)
+inspect(corpus_review_napoli)
+
+
+
+corpus_review_kokosnuss <- tm_map(corpus_review_kokosnuss, removeWords,stopwords("english"))
+corpus_review_kokosnuss <- tm_map(corpus_review_kokosnuss, stripWhitespace)
+inspect(corpus_review_kokosnuss)
+
+
+
+corpus_review_karlssons <- tm_map(corpus_review_karlssons, removeWords,stopwords("english"))
+corpus_review_karlssons <- tm_map(corpus_review_karlssons, stripWhitespace)
+inspect(corpus_review_karlssons)
+
+
+corpus_review_papaya <- tm_map(corpus_review_papaya, removeWords,stopwords("english"))
+corpus_review_papaya <- tm_map(corpus_review_papaya, stripWhitespace)
+inspect(corpus_review_papaya)
+
+
+#Stem the words to their root of all reviews present in the corpus
+install.packages("SnowballC")
+library("SnowballC")
+stem_corpus_review_horngrill <- tm_map(corpus_review_horngrill, stemDocument)
+stem_corpus_review_salamexicali <- tm_map(corpus_review_salamexicali, stemDocument)
+stem_corpus_review_waithai <- tm_map(corpus_review_waithai, stemDocument)
+stem_corpus_review_harrock <- tm_map(corpus_review_harrock, stemDocument)
+stem_corpus_review_catfish <- tm_map(corpus_review_catfish, stemDocument)
+stem_corpus_review_baanrim <- tm_map(corpus_review_baanrim, stemDocument)
+stem_corpus_review_thebua <- tm_map(corpus_review_thebua, stemDocument)
+stem_corpus_review_shakers <- tm_map(corpus_review_shakers, stemDocument)
+stem_corpus_review_royaltandoor<- tm_map(corpus_review_royaltandoor, stemDocument)
+stem_corpus_review_oceanfront<- tm_map(corpus_review_oceanfront, stemDocument)
+stem_corpus_review_peony<- tm_map(corpus_review_peony, stemDocument)
+stem_corpus_review_salsamexicana<- tm_map(corpus_review_salsamexicana, stemDocument)
+stem_corpus_review_sultans<- tm_map(corpus_review_sultans, stemDocument)
+stem_corpus_review_sunset<- tm_map(corpus_review_sunset, stemDocument)
+stem_corpus_review_twochefs<- tm_map(corpus_review_twochefs, stemDocument)
+stem_corpus_review_kwong<- tm_map(corpus_review_kwong, stemDocument)
+stem_corpus_review_lasala<- tm_map(corpus_review_lasala, stemDocument)
+stem_corpus_review_leonardo<- tm_map(corpus_review_leonardo, stemDocument)
+stem_corpus_review_rider<- tm_map(corpus_review_rider, stemDocument)
+stem_corpus_review_salaphuket<- tm_map(corpus_review_salaphuket, stemDocument)
+stem_corpus_review_boathouse<- tm_map(corpus_review_boathouse, stemDocument)
+stem_corpus_review_siamdeli<- tm_map(corpus_review_siamdeli, stemDocument)
+stem_corpus_review_briley<- tm_map(corpus_review_briley, stemDocument)
+stem_corpus_review_phenbar<- tm_map(corpus_review_phenbar, stemDocument)
+stem_corpus_review_tunkka<- tm_map(corpus_review_tunkka, stemDocument)
+stem_corpus_review_madras<- tm_map(corpus_review_madras, stemDocument)
+stem_corpus_review_napoli<- tm_map(corpus_review_napoli, stemDocument)
+stem_corpus_review_kokosnuss<- tm_map(corpus_review_kokosnuss, stemDocument)
+stem_corpus_review_karlssons<- tm_map(corpus_review_karlssons, stemDocument)
+stem_corpus_review_papaya<- tm_map(corpus_review_papaya, stemDocument)
+
+
+#Load the positive and negative lexicon data
+
+positive_lexicon <- read.csv("positive-lexicon.txt")
+negative_lexicon <- read.csv("negative-lexicon.txt")
+
+#inspect lexicons
+
+head(positive_lexicon)
+tail(positive_lexicon)
+
+head(negative_lexicon)
+tail(negative_lexicon)
+
+
+#Creating a function for sentimental analysis
+
+
+
+sentiment <- function(stem_corpus)
+{
+  #generate wordclouds
+  wordcloud(stem_corpus,
+            min.freq = 3,
+            colors=brewer.pal(8, "Dark2"),
+            random.color = TRUE,
+            max.words = 100)
+  
+  #Calculating the count of total positive and negative words in each review
+  
+  #Create variables and vectors
+  total_pos_count <- 0
+  total_neg_count <- 0
+  pos_count_vector <- c()
+  neg_count_vector <- c()
+  #Calculate the size of the corpus
+  size <- length(stem_corpus)
+  for(i in 1:size)
+  {
+    #All the words in current review
+    corpus_words<- list(strsplit(stem_corpus[[i]]$content, split = " "))
+    
+    #positive words in current review
+    pos_count <-length(intersect(unlist(corpus_words), unlist(positive_lexicon)))
+    #negative words in current review
+    neg_count <- length(intersect(unlist(corpus_words), unlist(negative_lexicon)))
+    total_pos_count <- total_pos_count + pos_count ## overall positive count
+    total_neg_count <- total_neg_count + neg_count ## overall negative count
+  }
+  
+  #Calculating overall percentage of positive and negative words of all the reviews
+  total_pos_count ## overall positive count
+  total_neg_count ## overall negative count
+  total_count <- total_pos_count + total_neg_count
+  overall_positive_percentage <- (total_pos_count*100)/total_count
+  overall_negative_percentage <- (total_neg_count*100)/total_count
+  overall_positive_percentage ## overall positive percentage
+  
+  #Create a dataframe with all the positive and negative reviews
+  df<-data.frame(Review_Type=c("Postive","Negitive"),
+                 Count=c(total_pos_count ,total_neg_count ))
+  print(df) #Print
+  overall_positive_percentage<-paste("Percentage of Positive Reviews:",
+                                     round(overall_positive_percentage,2),"%")
+  return(overall_positive_percentage)
+}
+
+#.Use sentiment() function and calculate the Percentage of Positive Reviews
+
+
+sentiment(stem_corpus_review_horngrill)
+sentiment(stem_corpus_review_salamexicali)
+sentiment(stem_corpus_review_waithai)
+sentiment(stem_corpus_review_harrock)
+sentiment(stem_corpus_review_catfish)
+sentiment(stem_corpus_review_baanrim)
+sentiment(stem_corpus_review_thebua)
+sentiment(stem_corpus_review_shakers)
+sentiment(stem_corpus_review_royaltandoor)
+sentiment(stem_corpus_review_oceanfront)
+sentiment(stem_corpus_review_peony)
+sentiment(stem_corpus_review_salsamexicana)
+sentiment(stem_corpus_review_sultans)
+sentiment(stem_corpus_review_sunset)
+sentiment(stem_corpus_review_twochefs)
+sentiment(stem_corpus_review_kwong)
+sentiment(stem_corpus_review_lasala)
+sentiment(stem_corpus_review_leonardo)
+sentiment(stem_corpus_review_rider)
+sentiment(stem_corpus_review_salaphuket)
+sentiment(stem_corpus_review_boathouse)
+sentiment(stem_corpus_review_siamdeli)
+sentiment(stem_corpus_review_briley)
+sentiment(stem_corpus_review_phenbar)
+sentiment(stem_corpus_review_tunkka)
+sentiment(stem_corpus_review_madras)
+sentiment(stem_corpus_review_napoli)
+sentiment(stem_corpus_review_kokosnuss)
+sentiment(stem_corpus_review_karlssons)
+sentiment(stem_corpus_review_papaya)
+
